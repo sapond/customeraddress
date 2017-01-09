@@ -11,5 +11,4 @@ const CustomerAddressSchema = new Schema(
   }
 );
 
-//Exports the BookSchema for use elsewhere.
 module.exports = mongoose.model('CustomerAddress', CustomerAddressSchema);

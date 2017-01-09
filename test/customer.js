@@ -1,19 +1,15 @@
-//During the test the env variable is set to test
-process.env.NODE_ENV = 'test';
-
-import chai from "chai";
-import chaiHttp from "chai-http";
-import server from "../server";
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import server from '../server';
 const Customer = require('../app/models/customer');
 const CustomerAddress = require('../app/models/customeraddress');
-const should = chai.should();
 
 chai.use(chaiHttp);
+chai.should();
 
-//Our parent block
 describe('Customers', () => {
   const myServer = chai.request(server);
-  beforeEach(done => { //Before each test we empty the database
+  beforeEach((done) => {
     let customers = [
       {_id: 1, name: 'Ryan'},
       {_id: 2, name: 'Jonathan'},
@@ -32,7 +28,7 @@ describe('Customers', () => {
     ];
     Promise.all([
       Customer.remove({}),
-      CustomerAddress.remove({})
+      CustomerAddress.remove({}),
     ])
       .then(() => (
         Promise.all([
@@ -40,14 +36,14 @@ describe('Customers', () => {
             CustomerAddress.insertMany(addresses)])
       ))
       .then(() => done());
-    });   
+    });
  /*
   * Test the /GET route
   */
   describe('/GET customer', () => {
     it('it should GET all customers having address', (done) => {
       myServer.get('/customer')
-          .then(res => {
+          .then((res) => {
             const customers = res.body;
             customers.should.be.a('array');
             customers.length.should.be.eql(3);
@@ -64,7 +60,7 @@ describe('Customers', () => {
     chai.request(server)
       .post('/customer')
       .send(customer)
-      .then(res => {
+      .then((res) => {
         res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.customer.customer.should.have.property('name');
@@ -73,7 +69,7 @@ describe('Customers', () => {
         res.body.customer.should.have.property('country');
         done();
       })
-      .catch(e => console.warn(e));
+      .catch((e) => console.warn(e));
     });
   });
  /*
@@ -83,7 +79,7 @@ describe('Customers', () => {
     it('it should GET a book by the given id', (done) => {
       chai.request(server)
         .get('/customer/1')
-        .then(res => {
+        .then((res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('customer');
@@ -92,18 +88,17 @@ describe('Customers', () => {
           res.body.should.have.property('country');
           done();
       });
-      
     });
   });
  /*
   * Test the /PUT/:id route
   */
   describe('/PUT/:id customer', () => {
-    it('it should UPDATE a customer given the id', done => {
+    it('it should UPDATE a customer given the id', (done) => {
       chai.request(server)
         .put('/customer/1')
         .send({name: 'foo', address: {street_address: 'bar'}})
-        .then(res => {
+        .then((res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('message').eql('Customer updated!');
@@ -120,12 +115,12 @@ describe('Customers', () => {
     it('it should DELETE a customer given the id', (done) => {
       chai.request(server)
         .delete('/customer/1')
-        .then(res => {
+        .then((res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('message')
             .eql('Customer successfully deleted!');
-          res.body.result.should.be.a('array')
+          res.body.result.should.be.a('array');
           res.body.result[0].should.have.property('ok').eql(1);
           res.body.result[0].should.have.property('n').eql(1);
           res.body.result[1].should.have.property('ok').eql(1);
@@ -135,4 +130,3 @@ describe('Customers', () => {
       });
     });
 });
-  
